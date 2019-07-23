@@ -1,4 +1,4 @@
-const { app, Tray, Menu, shell } = require('electron');
+const { app, Tray, Menu, shell, dialog } = require('electron');
 const { resolve, basename } = require('path');
 
 console.log('Iniciado');
@@ -8,6 +8,21 @@ const handleClose = () => app.quit();
 const handleIntellij = () => {
   shell.openExternal('C:\\Program Files\\JetBrains\\IntelliJ IDEA 2018.2.5\\bin\\idea64.exe')
 }
+
+
+const settingsWindow = () => {
+  // Create the browser window.
+  let win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+
+};
+
+
 
 //acho que o dock só funciona no mac
 // tsoenho sóue ajustar a ide para um aspecto melhor
@@ -30,6 +45,10 @@ app.on('ready', () => {
         handleIntellij();
       }
     },
+    {label: 'Configurações', type: 'normal', click(){
+      const win = settingsWindow();
+      win.loadFile('pages/settings.html');
+    }},
     {
       type: 'separator'
     },
