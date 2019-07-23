@@ -7,9 +7,18 @@ module.exports = function tray(win, app) {
   let quit = false;
 
   const handleClick = () => {
-    win.loadFile(resolve(__dirname, '..', 'pages', 'config', 'settings.html'));
-    win.setMenu(null);
-    win.isVisible() ? win.hide() : win.show();
+    console.log(win.isVisible());
+    if (win.isVisible()) {
+      win.hide()
+    } else {
+      console.log('show window');
+      win.loadFile(resolve(__dirname, '..', 'pages', 'config', 'settings.html'));
+      win.setMenu(null);
+      win.webContents.on('did-finish-load', () => {
+        win.show()
+      })
+    }
+
   }
 
   const handleQuit = () => {
@@ -17,10 +26,24 @@ module.exports = function tray(win, app) {
     win.close();
   };
 
+  const handleSobre = () => {
+    if (win.isVisible()) {
+      win.hide()
+    } else {
+      console.log('show window');
+      win.loadFile(resolve(__dirname, '..', 'pages', 'about', 'index.html'));
+      win.setMenu(null);
+      win.webContents.on('did-finish-load', () => {
+        win.show()
+      })
+    }
+  }
+
   let tray = null;
   tray = new Tray(resolve(__dirname, '..', 'assets', 'iconTemplate.png'));
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Configurações', type: 'normal', click: handleClick },
+    { label: 'Sobre', type: 'normal', click: handleSobre },
     { type: 'separator' },
     { label: 'Fechar', type: 'normal', click: handleQuit }
   ]);

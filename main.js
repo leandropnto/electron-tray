@@ -22,7 +22,7 @@ app.on('ready', () => {
     width: 800,
     height: 600,
     resizable: false,
-    title: 'Configurações',
+    title: 'Electron Tray',
     minimizable: false,
     fullscreenable: false,
     show: false,
