@@ -1,0 +1,76 @@
+* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+  background: #fafafa;
+}
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap');
+
+html,
+body,
+main {
+  height: 100%;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 14px;
+}
+
+input, select {
+  font-family: 'Roboto Condensed', sans-serif;
+  border: 1px solid #dedede;
+  height: 24px;
+  padding: 5px;
+}
+
+button,
+i {
+  cursor: pointer;
+  background: transparent;
+}
+
+main {
+  display: flex;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+
+  div {
+    border: 1px solid #ddd;
+    margin: 10px;
+    width: 100%;
+    box-sizing: border-box;
+
+    h1 {
+      background: #ddd;
+      padding: 10px;
+
+      display: flex;
+      justify-content: space-between;
+    }
+
+    section {
+      box-sizing: border-box;
+      display: flex;
+      padding: 20px;
+      min-height: 300px;
+
+      div.form-group {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 20px 10px;
+        label {font-weight: bold; text-transform: uppercase}
+        input {margin-top: 5px;}
+
+
+      }
+
+      div.form-group.intellij {
+        max-width: 200px;
+      }
+
+
+    }
+  }
+}
