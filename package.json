@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cross-spawn": "^6.0.5",
     "electron-store": "^4.0.0"
   },
   "main": "main.js",
