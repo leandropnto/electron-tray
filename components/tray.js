@@ -2,6 +2,7 @@ const { Tray, Menu, dialog } = require('electron');
 const { resolve, basename } = require('path');
 const child = require('child_process').spawn;
 const executables = { code: 'code', intellij: `"C:\\Program Files\\JetBrains\\IntelliJ IDEA 2018.2.5\\bin\\idea.bat"` }
+const { platform } = require('os'), osType = platform();
 
 const Store = require('electron-store');
 
@@ -19,11 +20,11 @@ module.exports = function tray(win) {
   let quit = false;
 
   const handleClick = () => {
-    console.log(win.isVisible());
+
     if (win.isVisible()) {
       win.hide()
     } else {
-      console.log('show window');
+
       win.loadFile(resolve(__dirname, '..', 'pages', 'config', 'settings.html'));
       win.setMenu(null);
       win.webContents.on('did-finish-load', () => {
@@ -42,7 +43,6 @@ module.exports = function tray(win) {
     if (win.isVisible()) {
       win.hide()
     } else {
-      console.log('show window');
       win.loadFile(resolve(__dirname, '..', 'pages', 'about', 'index.html'));
       win.setMenu(null);
       win.webContents.on('did-finish-load', () => {
@@ -86,16 +86,21 @@ module.exports = function tray(win) {
 
   const handleOpenItem = item => {
     const executablePath = executables[item.type];
-    console.log(`${executablePath} ${item.path}`);
     const parameters = [item.path];
-    child(executablePath, parameters, {
+
+    let options = {
       shell: true,
       cwd: process.cwd(),
       env: {
         PATH: process.env.PATH,
       },
       stdio: 'inherit',
-    }, function (err, data) {
+    };
+
+    if (osType == 'win32') {
+      options.shell = true;
+     }
+    child(executablePath, parameters, options, function (err, data) {
       console.log(err)
       console.log(data.toString());
     });
@@ -105,12 +110,12 @@ module.exports = function tray(win) {
   const buildMenu = (item) => {
     const storedProjects = store.get('projects');
     const projects = storedProjects ? JSON.parse(storedProjects) : [];
-    console.log(item);
+
     if (item) {
       projects.push(item);
       store.set('projects', JSON.stringify([...projects]));
     }
-    console.log(projects);
+
     const items = projects.map(item => {
       return {
         label: item.name,
