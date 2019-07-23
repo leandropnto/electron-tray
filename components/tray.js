@@ -3,8 +3,18 @@ const { resolve, basename } = require('path');
 const child = require('child_process').spawn;
 const executables = { code: 'code', intellij: `"C:\\Program Files\\JetBrains\\IntelliJ IDEA 2018.2.5\\bin\\idea.bat"` }
 
+const Store = require('electron-store');
 
-module.exports = function tray(win, store, projects, store) {
+
+module.exports = function tray(win) {
+  const schema = {
+    projects: {
+      type: 'string',
+    },
+  };
+
+  const store = new Store({ schema });
+
 
   let quit = false;
 
@@ -54,6 +64,9 @@ module.exports = function tray(win, store, projects, store) {
       name,
       type: 'intellij'
     }]));
+
+
+    buildMenu();
   }
 
   const handleAddCode = () => {
@@ -64,11 +77,11 @@ module.exports = function tray(win, store, projects, store) {
     const [path] = result;
     const name = basename(path);
 
-    store.set('projects', JSON.stringify([...projects, {
+    buildMenu({
       path,
       name,
       type: 'code'
-    }]));
+    });
   }
 
   const handleOpenItem = item => {
@@ -89,35 +102,50 @@ module.exports = function tray(win, store, projects, store) {
 
   }
 
-  let tray = null;
-  tray = new Tray(resolve(__dirname, '..', 'assets', 'iconTemplate.png'));
-  const items = projects.map(item => {
-    return {
-      label: item.name,
-      type: 'normal',
-      click: () => { handleOpenItem(item) }
+  const buildMenu = (item) => {
+    const storedProjects = store.get('projects');
+    const projects = storedProjects ? JSON.parse(storedProjects) : [];
+    console.log(item);
+    if (item) {
+      projects.push(item);
+      store.set('projects', JSON.stringify([...projects]));
     }
-  });
+    console.log(projects);
+    const items = projects.map(item => {
+      return {
+        label: item.name,
+        type: 'normal',
+        click: () => { handleOpenItem(item) }
+      }
+    });
 
-  const handleClean = () => {
-    store.clear();
+    const contextMenu = Menu.buildFromTemplate([
+      ...items,
+      { type: 'separator' },
+      { label: 'Configurações', type: 'normal', click: handleClick },
+      { label: 'Sobre', type: 'normal', click: handleSobre },
+      { type: 'separator' },
+      { label: 'Adicionar Projeto Intellij', type: 'normal', click: handleAddIntellij },
+      { label: 'Adicionar Projeto Code', type: 'normal', click: handleAddCode },
+      { type: 'separator' },
+      { label: 'Limpar diretorios', type: 'normal', click: handleClean },
+      { type: 'separator' },
+      { label: 'Fechar', type: 'normal', click: handleQuit }
+    ]);
+    tray.setToolTip('Electron App');
+    tray.setContextMenu(contextMenu);
   }
 
-  const contextMenu = Menu.buildFromTemplate([
-    ...items,
-    { type: 'separator' },
-    { label: 'Configurações', type: 'normal', click: handleClick },
-    { label: 'Sobre', type: 'normal', click: handleSobre },
-    { type: 'separator' },
-    { label: 'Adicionar Projeto Intellij', type: 'normal', click: handleAddIntellij },
-    { label: 'Adicionar Projeto Code', type: 'normal', click: handleAddCode },
-    { type: 'separator' },
-    { label: 'Limpar diretorios', type: 'normal', click: handleClean },
-    { type: 'separator' },
-    { label: 'Fechar', type: 'normal', click: handleQuit }
-  ]);
-  tray.setToolTip('Electron App');
-  tray.setContextMenu(contextMenu);
+  let tray = null;
+  tray = new Tray(resolve(__dirname, '..', 'assets', 'iconTemplate.png'));
+
+
+  const handleClean = () => {
+    store.set('projects', JSON.stringify([]));
+    buildMenu();
+  }
+
+  buildMenu();
 
   // tray.on('click', () => {
   //   win.isVisible() ? win.hide() : win.show()
