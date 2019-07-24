@@ -1,8 +1,6 @@
 const { app, Tray, Menu, shell, dialog, BrowserWindow } = require('electron');
 const { spawn } = require('child_process');
 
-
-
 console.log('Iniciado');
 
 //acho que o dock só funciona no mac

@@ -3,6 +3,7 @@ const { resolve, basename } = require('path');
 const child = require('child_process').spawn;
 const executables = { code: 'code', intellij: `"C:\\Program Files\\JetBrains\\IntelliJ IDEA 2018.2.5\\bin\\idea.bat"` }
 const { platform } = require('os'), osType = platform();
+const {handleClick} = require('../actions/handles');
 
 const Store = require('electron-store');
 
@@ -19,20 +20,7 @@ module.exports = function tray(win) {
 
   let quit = false;
 
-  const handleClick = () => {
 
-    if (win.isVisible()) {
-      win.hide()
-    } else {
-
-      win.loadFile(resolve(__dirname, '..', 'pages', 'config', 'settings.html'));
-      win.setMenu(null);
-      win.webContents.on('did-finish-load', () => {
-        win.show()
-      })
-    }
-
-  }
 
   const handleQuit = () => {
     quit = true;
@@ -127,7 +115,7 @@ module.exports = function tray(win) {
     const contextMenu = Menu.buildFromTemplate([
       ...items,
       { type: 'separator' },
-      { label: 'Configurações', type: 'normal', click: handleClick },
+      { label: 'Configurações', type: 'normal', click: () => {handleClick(win)} },
       { label: 'Sobre', type: 'normal', click: handleSobre },
       { type: 'separator' },
       { label: 'Adicionar Projeto Intellij', type: 'normal', click: handleAddIntellij },
@@ -167,7 +155,7 @@ module.exports = function tray(win) {
       win = null;
     } else {
       e.preventDefault();
-      handleClick();
+      handleClick(win);
     }
   })
   return tray;
