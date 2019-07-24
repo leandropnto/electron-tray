@@ -3,17 +3,30 @@
     "cross-spawn": "^6.0.5",
     "electron-store": "^4.0.0"
   },
+  "name": "electron-tray",
+  "description": "Icon tray app for open projects",
+  "author": {"name": "Leandro Pinto", "email": "leandro.pnto@gmail.com", "url": "https://github.com/leandropnto"},
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/iconTemplate.ico.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . electron-tray --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/iconTemplate.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Electron Tutorial App\"",
-    "package-linux": "electron-packager . electron-tray --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/iconTemplate.ico --prune=true --out=release-builds"
+    "package-linux": "electron-packager . electron-tray --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/iconTemplate.ico --prune=true --out=release-builds",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "devDependencies": {
     "electron": "^5.0.7",
+    "electron-builder": "^21.1.1",
     "electron-packager": "^14.0.2"
   },
   "productName": "Electron-tray",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "build" : {
+    "appId": "com.cloundnine.electrontray",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
+  }
 }
